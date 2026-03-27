@@ -59,11 +59,20 @@ PROJECT_DIR="$HOME/$PROJECT"
 
 echo "=== Installing $PROJECT on $(hostname) ==="
 
-# Clone or pull
+# Check if already installed and up to date
 if [ -d "$PROJECT_DIR/.git" ]; then
-    echo "Repo exists, pulling latest..."
     cd "$PROJECT_DIR"
-    git fetch origin
+    git fetch origin --quiet
+    LOCAL=$(git rev-parse HEAD)
+    REMOTE=$(git rev-parse "origin/$BRANCH")
+
+    if [ "$LOCAL" = "$REMOTE" ] && [ -d .venv ]; then
+        echo "Already installed and up to date (commit: ${LOCAL:0:7})"
+        echo "=== Skipped (up to date) ==="
+        exit 0
+    fi
+
+    echo "Repo exists but needs update..."
     git checkout "$BRANCH"
     git pull origin "$BRANCH"
 else
@@ -145,13 +154,13 @@ Show a summary table:
 
 ```
 === Install Summary ===
-Cluster      Status    Branch    Commit    Path
-==========   =======   =======   =======   ====
-mila         OK        main      abc1234   /home/mila/e/emiliano.penaloza/PROJECT
-rorqual      OK        main      abc1234   /home/emiliano/PROJECT
-fir          OK        main      abc1234   /home/emiliano/PROJECT
-nibi         FAILED    -         -         (git clone failed — SSH key not on GitHub)
-trillium     SKIP      -         -         (not connected)
+Cluster      Status       Branch    Commit    Path
+==========   ==========   =======   =======   ====
+mila         UP TO DATE   main      abc1234   /home/mila/e/emiliano.penaloza/PROJECT
+rorqual      UPDATED      main      abc1234   /home/emiliano/PROJECT
+fir          INSTALLED    main      abc1234   /home/emiliano/PROJECT
+nibi         FAILED       -         -         (git clone failed — SSH key not on GitHub)
+trillium     SKIP         -         -         (not connected)
 ```
 
 ---
