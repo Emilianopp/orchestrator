@@ -111,19 +111,6 @@ All DRAC clusters use SLURM, module-based software (Lmod, StdEnv/2023), and shar
 | **Max job** | 7 days |
 | **Network** | Nokia 200/400G Ethernet |
 
-#### Trillium (replaced Niagara)
-
-| Property | Value |
-|---|---|
-| **Login (CPU)** | `trillium.alliancecan.ca` |
-| **Login (GPU)** | `trillium-gpu.alliancecan.ca` |
-| **Location** | U Toronto (SciNet), ON |
-| **GPUs** | 63 nodes x 4x H100 SXM 80GB (NVLink) |
-| **CPUs** | 1,224 nodes x 192c AMD EPYC 9655 |
-| **Internet from compute** | Unknown |
-| **Max job** | 7 days |
-| **Network** | InfiniBand NDR, fully non-blocking |
-
 ---
 
 ### Alliance Canada -- PAICE Clusters (AI-focused)
@@ -177,7 +164,7 @@ PAICE clusters have additional access requirements: AIP-type RAP membership (pre
 | GPU | VRAM | Total GPUs | Clusters |
 |---|---|---|---|
 | **H200** | 141 GB HBM3 | 96 | TamIA (96) |
-| **H100** | 80 GB | 1,520 | Fir (640), Nibi (288), Trillium (252), TamIA (212), Killarney (80), Rorqual (32), Mila (16) |
+| **H100** | 80 GB | 1,268 | Fir (640), Nibi (288), TamIA (212), Killarney (80), Rorqual (32), Mila (16) |
 | **A100** | 80 GB | 136 | Mila (136) |
 | **A100** | 40 GB | 668 | Narval (636), Mila (32) |
 | **L40S** | 48 GB | 2,044 | Vulcan (1,008), Killarney (672), Mila (364) |
@@ -194,7 +181,6 @@ PAICE clusters have additional access requirements: AIP-type RAP membership (pre
 | **Mila** | 1,020 (L40S, RTX 8000, A100, H100, V100, A6000) | Live |
 | **Fir** | 640 (H100) | Live |
 | **Nibi** | 312 (H100, MI300A) | Live |
-| **Trillium** | 252 (H100) | Live |
 | **TamIA** | 308 (H200, H100) | Connecting |
 | **Rorqual** | 32 (H100) | Live |
 | **Narval** | 636 (A100 40GB) | Down |
@@ -214,7 +200,6 @@ PAICE clusters have additional access requirements: AIP-type RAP membership (pre
 | Rorqual | H100 80GB | `--gres=gpu:h100:N` |
 | Fir | H100 80GB | `--gres=gpu:h100:N` |
 | Nibi | H100 80GB | `--gres=gpu:h100:N` |
-| Trillium | H100 80GB | `--gres=gpu:h100:N` |
 | TamIA | H100/H200 | Whole-node only (all 4 H100 or all 8 H200) |
 
 Notes:
@@ -233,7 +218,7 @@ When choosing where to submit a job, consider:
 5. **Data locality** -- prefer clusters where data already lives
 6. **Allocation** -- TamIA requires whole-node; others allow fractional
 
-**Priority order (for GPU work):** Rorqual > Fir > Nibi > Trillium > Mila (a100l) > TamIA (if AIP RAP)
+**Priority order (for GPU work):** Rorqual > Fir > Nibi > Mila (a100l) > TamIA (if AIP RAP)
 
 ---
 
@@ -285,7 +270,7 @@ Connections rely on SSH multiplexing (`ControlMaster auto` + `ControlPersist yes
 **Pre-flight connection check:**
 ```bash
 # Run before any job submission
-for host in mila rorqual fir nibi trillium tamia; do
+for host in mila rorqual fir nibi tamia; do
   ssh -O check "$host" 2>/dev/null && echo "$host: live" || echo "$host: down"
 done
 ```
@@ -382,7 +367,7 @@ scancel --user=$USER                 # all my jobs
 
 SSH config is at `~/.ssh/config` with multiplexing already enabled (`ControlMaster auto`, `ControlPersist yes`). Socket files in `~/.cache/ssh/`.
 
-**Active cluster aliases:** `narval`, `rorqual`, `fir`, `nibi`, `trillium` (+ legacy: `beluga`, `cedar`, `graham`, `niagara`)
+**Active cluster aliases:** `narval`, `rorqual`, `fir`, `nibi` (+ legacy: `beluga`, `cedar`, `graham`, `niagara`)
 **Mila:** `mila` (port 2222), `mila-cpu` (via slurm-proxy)
 
 **Connection warmup (do once per day for 2FA):**
@@ -391,7 +376,6 @@ ssh narval echo "OK"
 ssh rorqual echo "OK"
 ssh fir echo "OK"
 ssh nibi echo "OK"
-ssh trillium echo "OK"
 ssh mila echo "OK"
 ```
 After this, the orchestrator uses the persistent multiplexed connections with no further 2FA.
@@ -416,8 +400,8 @@ After this, the orchestrator uses the persistent multiplexed connections with no
 
 | Account | Use for | Clusters |
 |---------|---------|----------|
-| `rrg-bengioy-ad` | Default for all CC jobs (RAC, higher priority) | rorqual, fir, nibi, trillium, narval |
-| `def-bengioy` | Fallback / low-priority test jobs | rorqual, fir, nibi, trillium, narval |
+| `rrg-bengioy-ad` | Default for all CC jobs (RAC, higher priority) | rorqual, fir, nibi, narval |
+| `def-bengioy` | Fallback / low-priority test jobs | rorqual, fir, nibi, narval |
 | `aip-lcharlin` | TamIA (PAICE, required) | tamia |
 
 ---

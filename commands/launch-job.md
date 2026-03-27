@@ -16,6 +16,8 @@ Ask the user ONLY for information you can't infer:
 - **GPU count** — default to 1 if unclear
 - **Target cluster** — or auto-select based on availability
 
+**Cross-cluster resume:** If the user is resuming a run that was previously training on a different cluster, suggest running `/orch-sync-checkpoint pull` first to fetch the latest weight checkpoint from HuggingFace Hub before launching.
+
 Do NOT ask about wall time, partitions, CPU counts, or memory — use the defaults below.
 
 ---
@@ -27,7 +29,7 @@ Run `/orch-gpu-status` (or `scripts/gpu-status.sh` from the orchestrator repo) t
 Pick the best cluster using this priority:
 1. User's explicit choice (if given)
 2. Cluster with most free GPUs of the requested type
-3. Tiebreaker: rorqual > fir > nibi > trillium > mila
+3. Tiebreaker: rorqual > fir > nibi > mila
 
 ---
 
@@ -37,13 +39,13 @@ Use the appropriate template below based on the target cluster. **Always prefer 
 
 ### Cluster-specific settings
 
-| Setting | Mila | DRAC (rorqual, fir, nibi, trillium) |
+| Setting | Mila | DRAC (rorqual, fir, nibi) |
 |---------|------|--------------------------------------|
 | GPU flag | `--gres=gpu:MODEL:N` | `--gpus-per-node=MODEL:N` |
 | Account | not needed | `--account=rrg-bengioy-ad` (default); TamIA: `--account=aip-lcharlin` |
 | CPUs/GPU | 4 (default) | rorqual: 16, fir: 12, nibi: 14 |
 | Partitions | see below | no partition flag needed (auto) |
-| Internet | yes (all nodes) | fir, nibi: yes; rorqual, trillium: no |
+| Internet | yes (all nodes) | fir, nibi: yes; rorqual: no |
 | Env setup | `source .venv/bin/activate` | `source .venv/bin/activate` |
 | Pip | normal | `--no-index` (pre-built wheels, no internet) |
 
@@ -214,7 +216,6 @@ DRAC time-based partitions (nested — shorter = more eligible partitions):
 
 Only increase wall time if the user explicitly asks. When using short jobs + self-resubmission, the training runs indefinitely via checkpoint chaining.
 
-**Trillium exception:** Max 24h wall time, whole-node allocation only.
 **TamIA exception:** Max 24h, whole-node only (all 4 H100 or all 8 H200).
 
 ---
@@ -223,7 +224,7 @@ Only increase wall time if the user explicitly asks. When using short jobs + sel
 
 - **Never request MIG slices.** Always use full GPU names (`h100`, `a100l`, etc.)
 - On Mila, `a100l` = A100 80GB. Plain `a100` = 40GB.
-- On DRAC clusters without internet (rorqual, trillium): all dependencies must be pre-installed or use `--no-index` wheels.
+- On DRAC clusters without internet (rorqual): all dependencies must be pre-installed or use `--no-index` wheels.
 - Always use `ssh -o BatchMode=yes -o ConnectTimeout=5` for non-interactive commands.
 - If the project uses `uv`: `uv sync` on login node first, then `source .venv/bin/activate` in the job.
 - Multi-GPU DDP on Mila needs:

@@ -1,7 +1,7 @@
 Check GPU availability across all connected clusters. Only report full GPUs (no MIG slices).
 
 Steps:
-1. Check which clusters have live SSH master connections by running `ssh -O check <host>` for each of: mila, rorqual, fir, nibi, trillium, tamia, narval. Run all checks in parallel.
+1. Check which clusters have live SSH master connections by running `ssh -O check <host>` for each of: mila, rorqual, fir, nibi, tamia, narval. Run all checks in parallel.
 
 2. For all live clusters, run `scripts/gpu-status.sh` which handles both Mila (`savail`) and DRAC (`sinfo` with GresUsed) automatically.
 

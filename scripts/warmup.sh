@@ -3,7 +3,7 @@
 # Run once per day to satisfy 2FA, then the orchestrator reuses them.
 # Auto-selects option 1 for the 2FA prompt.
 
-CLUSTERS=(narval rorqual fir nibi trillium tamia)
+CLUSTERS=(narval rorqual fir nibi tamia)
 
 for host in "${CLUSTERS[@]}"; do
   if ssh -O check "$host" 2>/dev/null; then

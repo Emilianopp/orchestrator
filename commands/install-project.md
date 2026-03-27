@@ -26,7 +26,7 @@ Then determine:
 
 ## Step 2: Check which clusters are live
 
-Run `ssh -O check <host>` for each of: mila, rorqual, fir, nibi, trillium, tamia, narval. All checks in parallel.
+Run `ssh -O check <host>` for each of: mila, rorqual, fir, nibi, tamia, narval. All checks in parallel.
 
 Only proceed with clusters that have a live SSH master connection.
 
@@ -44,7 +44,6 @@ For each live cluster, run the install sequence via SSH. **Run all clusters in p
 | rorqual | `emiliano` | `$HOME` | Yes | No |
 | fir | `emiliano` | `$HOME` | Yes | Yes |
 | nibi | `emiliano` | `$HOME` | Yes | Yes |
-| trillium | `emiliano` | `$HOME` | Yes | Unknown |
 | tamia | `emiliano` | `$HOME` | Yes | No |
 | narval | `emiliano` | `$HOME` | Yes | No |
 
@@ -175,7 +174,6 @@ mila         UP TO DATE   main      abc1234   /home/mila/e/emiliano.penaloza/PRO
 rorqual      UPDATED      main      abc1234   /home/emiliano/PROJECT
 fir          INSTALLED    main      abc1234   /home/emiliano/PROJECT
 nibi         FAILED       -         -         (git clone failed — SSH key not on GitHub)
-trillium     SKIP         -         -         (not connected)
 ```
 
 ---
@@ -184,6 +182,6 @@ trillium     SKIP         -         -         (not connected)
 
 - Always use `ssh -o BatchMode=yes -o ConnectTimeout=10` to avoid hangs
 - Run installs in parallel across clusters — don't wait for one to finish before starting the next
-- On DRAC clusters without internet on compute (rorqual, tamia), the `uv sync` on the login node ensures all packages are cached in `.venv` so compute jobs don't need to download anything
+- On DRAC clusters without internet on compute (rorqual, tamia, narval), the `uv sync` on the login node ensures all packages are cached in `.venv` so compute jobs don't need to download anything
 - If the project has a `.env` file locally, do NOT copy it automatically — it may contain secrets. Ask the user first.
 - The project is installed to `$HOME/PROJECT_NAME` by default. If the user has a preference for `$SCRATCH`, ask.

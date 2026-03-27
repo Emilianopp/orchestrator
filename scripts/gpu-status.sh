@@ -3,8 +3,8 @@
 # Skips MIG slices -- only reports full GPUs.
 # Usage: ./scripts/gpu-status.sh
 
-CLUSTERS=(mila rorqual fir nibi trillium tamia narval)
-DRAC_CLUSTERS=(rorqual fir nibi trillium tamia narval)
+CLUSTERS=(mila rorqual fir nibi tamia narval)
+DRAC_CLUSTERS=(rorqual fir nibi tamia narval)
 TMPDIR=$(mktemp -d)
 trap 'rm -rf "$TMPDIR"' EXIT
 
