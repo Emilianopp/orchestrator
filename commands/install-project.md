@@ -6,12 +6,21 @@ You are a remote environment installer. Your goal is to clone the project repo, 
 
 ## Step 1: Understand the project
 
-Read the current project to determine:
+**Before doing anything, read the project's own docs to find its install procedure.** Check these in order:
+1. `README.md` — look for "Installation", "Setup", "Getting Started", "Quick Start" sections
+2. `CLAUDE.md` or `AGENTS.md` — may have agent-specific install instructions
+3. `docs/` directory — look for setup/install guides
+4. `scripts/install.sh` or `Makefile` — project may have its own install script
+5. `CONTRIBUTING.md` — may document dev setup
+
+**If the project has its own install instructions, follow those instead of the generic sequence below.** Adapt the remote commands accordingly (e.g., if it says `make install` or `scripts/install.sh`, use that).
+
+Then determine:
 - The **git remote URL**: `git remote get-url origin`
 - The **current branch**: `git branch --show-current`
 - The **project name**: basename of the repo
-- Whether it uses **uv** (look for `pyproject.toml` + `uv.lock`) or **pip** (`requirements.txt`)
-- Any special setup (`.env` file, git submodules, LFS, etc.)
+- The **install method**: project-specific script > `uv.lock` > `requirements.txt` > `pyproject.toml`
+- Any special setup (`.env` file, git submodules, LFS, specific Python version, etc.)
 
 ---
 
@@ -87,9 +96,17 @@ if [ -f .gitmodules ]; then
     git submodule update --init --recursive
 fi
 
-# Setup environment
-if [ -f uv.lock ]; then
-    # uv-based project
+# Setup environment — use project's own install method if found
+# IMPORTANT: Replace this block with the project's actual install commands
+# if you found specific instructions in Step 1 (README, scripts/install.sh, Makefile, etc.)
+
+if [ -x scripts/install.sh ]; then
+    echo "Running project install script..."
+    bash scripts/install.sh
+elif [ -f Makefile ] && grep -q "install" Makefile; then
+    echo "Running make install..."
+    make install
+elif [ -f uv.lock ]; then
     echo "Setting up with uv..."
     if ! command -v uv &>/dev/null; then
         echo "Installing uv..."
@@ -99,7 +116,6 @@ if [ -f uv.lock ]; then
     uv sync --all-extras 2>&1 | tail -5
     echo "uv sync complete"
 elif [ -f requirements.txt ]; then
-    # pip-based project
     echo "Setting up with pip..."
     python3 -m venv .venv 2>/dev/null || python -m venv .venv
     source .venv/bin/activate
@@ -107,7 +123,6 @@ elif [ -f requirements.txt ]; then
     pip install -r requirements.txt -q
     echo "pip install complete"
 elif [ -f pyproject.toml ]; then
-    # pyproject with no lockfile — use uv anyway
     echo "Setting up with uv (from pyproject.toml)..."
     if ! command -v uv &>/dev/null; then
         curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -116,7 +131,7 @@ elif [ -f pyproject.toml ]; then
     uv sync 2>&1 | tail -5
     echo "uv sync complete"
 else
-    echo "WARNING: No dependency file found (uv.lock, requirements.txt, pyproject.toml)"
+    echo "WARNING: No install method found"
 fi
 
 # Verify
