@@ -40,7 +40,7 @@ Use the appropriate template below based on the target cluster. **Always prefer 
 | Setting | Mila | DRAC (rorqual, fir, nibi, trillium) |
 |---------|------|--------------------------------------|
 | GPU flag | `--gres=gpu:MODEL:N` | `--gpus-per-node=MODEL:N` |
-| Account | not needed | `--account=def-emilianopp` (ask user if unknown) |
+| Account | not needed | `--account=rrg-bengioy-ad` (default); TamIA: `--account=aip-lcharlin` |
 | CPUs/GPU | 4 (default) | rorqual: 16, fir: 12, nibi: 14 |
 | Partitions | see below | no partition flag needed (auto) |
 | Internet | yes (all nodes) | fir, nibi: yes; rorqual, trillium: no |
@@ -121,7 +121,7 @@ fi
 ```bash
 #!/bin/bash
 #SBATCH --job-name=JOB_NAME
-#SBATCH --account=ACCOUNT
+#SBATCH --account=rrg-bengioy-ad
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=CPUS

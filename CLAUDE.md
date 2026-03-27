@@ -412,9 +412,13 @@ After this, the orchestrator uses the persistent multiplexed connections with no
 
 ---
 
-## DRAC Account
+## DRAC Accounts
 
-Default SLURM account: `def-emilianopp` (confirm with `sacctmgr show associations user=$USER`).
+| Account | Use for | Clusters |
+|---------|---------|----------|
+| `rrg-bengioy-ad` | Default for all CC jobs (RAC, higher priority) | rorqual, fir, nibi, trillium, narval |
+| `def-bengioy` | Fallback / low-priority test jobs | rorqual, fir, nibi, trillium, narval |
+| `aip-lcharlin` | TamIA (PAICE, required) | tamia |
 
 ---
 
