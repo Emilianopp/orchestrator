@@ -1,0 +1,32 @@
+# Example job configuration for the orchestrator.
+# Copy this file and adjust for your training run.
+
+name: my-training-run
+clusters:
+  preferred: [rorqual, fir]
+  fallback: [nibi, mila]
+resources:
+  gpus: 4
+  gpu_type: h100        # h100, a100l, a100, l40s, any
+  gpu_mem_min: 80       # GB
+  cpus_per_task: 8
+  mem: 64G
+  time: "1-00:00:00"    # 1 day
+partition: main
+env:
+  modules: [python/3.10]
+  venv: $HOME/envs/myenv
+  setup: |
+    pip install -r requirements.txt
+script: train.sh
+repo:
+  url: git@github.com:user/repo.git
+  branch: main
+data:
+  source: /network/datasets/my_dataset
+  copy_to_tmpdir: true
+monitoring:
+  check_interval: 300   # seconds
+  alert_on: [FAILED, TIMEOUT, OOM]
+  auto_resubmit: true
+  max_resubmits: 3
