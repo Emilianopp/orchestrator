@@ -398,13 +398,31 @@ After this, the orchestrator uses the persistent multiplexed connections with no
 
 ---
 
+## Scheduling Strategy
+
+**Prefer short jobs (≤3h) for fastest scheduling.** SLURM backfill scheduling fills gaps with short jobs, so a 3h job starts much sooner than a 7d job. Use checkpoint-resume + self-resubmission to chain short jobs into long training runs.
+
+**DRAC nested time partitions (shorter = more partitions = faster start):**
+- ≤3h → eligible for ALL partitions
+- ≤12h → most partitions
+- ≤24h → fewer
+- ≤7d → minimum partitions
+
+**Mila:** Use `short-unkillable` (3h, up to 4 GPUs) for H100 or guaranteed short runs. Use `unkillable` (2d, 1 GPU) for single-GPU guaranteed. Use `main` (5d, 2 GPU) for standard. `long` (7d, no GPU limit) for large runs but lowest priority.
+
+---
+
+## DRAC Account
+
+Default SLURM account: `def-emilianopp` (confirm with `sacctmgr show associations user=$USER`).
+
+---
+
 ## TODO
 
+- [x] ~~Define job config schema~~ → see `configs/example-job.yaml`
+- [x] ~~Implement job submission pipeline~~ → see `/launch-job` skill
 - [ ] Determine which clusters we actually have active allocations on
-- [ ] Set up SSH key auth and test connectivity to each cluster
-- [ ] Define job config schema (YAML)
-- [ ] Implement SSH connection manager
-- [ ] Implement job submission pipeline
 - [ ] Implement monitoring loop with state persistence
 - [ ] Add auto-resubmit logic (FAILED, TIMEOUT, OOM)
 - [ ] Add multi-cluster failover

@@ -25,6 +25,7 @@ cd ~/Git/my-project
 This symlinks slash commands and cluster context into your project so Claude Code can use them:
 
 - `/orch-gpu-status` — check GPU availability across all clusters
+- `/orch-launch-job` — generate sbatch, upload, and submit a job to the best cluster
 - Cluster knowledge (GPU inventory, partitions, storage, SLURM patterns) available as context
 
 To remove:
@@ -39,7 +40,8 @@ To remove:
 orchestrator/
 ├── CLAUDE.md              # Cluster knowledge + orchestrator spec
 ├── commands/              # Claude Code slash commands
-│   └── gpu-status.md
+│   ├── gpu-status.md
+│   └── launch-job.md
 ├── scripts/
 │   ├── gpu-status.sh      # GPU availability checker
 │   ├── warmup.sh          # SSH 2FA warmup
